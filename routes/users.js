@@ -79,7 +79,8 @@ router.post('/register',(req,res)=>{
                         /* with no error, redirect to login directory */
                         .then((value)=>{
                             console.log(value)
-                        res.redirect('/users/login');
+                            req.flash('success_msg','You have now registered!');
+                            res.redirect('/users/login');
                         })
                         .catch(value=> console.log(value));
                         
@@ -90,12 +91,22 @@ router.post('/register',(req,res)=>{
     }
 })
     
-
+/*  If the user has successfully logged in, they will be redirected to the dashboard directory (successRedirect).
+    If the user does not log in successfully, redirect them to the login directory (failureRedirect).
+    Get flash messages when an error occurs (failureFlash). */
 router.post('/login',(req,res,next)=>{
+    passport.authenticate('local',{
+        successRedirect : '/dashboard',
+        failureRedirect : '/users/login',
+        failureFlash : true,
+        })(req,res,next);
   })
 
 //logout
 router.get('/logout',(req,res)=>{
+    req.logout();
+    req.flash('success_msg','Now logged out');
+    res.redirect('/users/login');
  })
 
 
